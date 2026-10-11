@@ -1,6 +1,6 @@
 package org.firstinspires.ftc.teamcode.components;
 
-import com.bylazar.configurables.annotations.Configurable;
+//import com.bylazar.configurables.annotations.Configurable;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -11,7 +11,7 @@ import org.firstinspires.ftc.teamcode.util.LogCatUtil;
 import org.firstinspires.ftc.teamcode.components.base.BaseComponent;
 import org.firstinspires.ftc.teamcode.components.base.Command;
 
-@Configurable
+//@Configurable
 public class Intake extends BaseComponent {
 
     LogCatUtil log;

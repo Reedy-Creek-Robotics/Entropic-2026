@@ -1,7 +1,7 @@
 package org.firstinspires.ftc.teamcode.components.base;
 
-import com.bylazar.telemetry.PanelsTelemetry;
-import com.bylazar.telemetry.TelemetryManager;
+//import com.bylazar.telemetry.PanelsTelemetry;
+//import com.bylazar.telemetry.TelemetryManager;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.HardwareMap;
@@ -26,8 +26,8 @@ public abstract class BaseComponent implements Component {
 
     protected HardwareMap hardwareMap;
 
-    protected Telemetry ftcTelemetry;
-    protected TelemetryManager telemetry;
+    protected Telemetry telemetry;
+//    protected TelemetryManager telemetry;
 
     protected ElapsedTime commandTime;
 
@@ -48,8 +48,8 @@ public abstract class BaseComponent implements Component {
         this.commandTime = new ElapsedTime();
         this.currentCommand = null;
         this.nextCommands = new ArrayList<>();
-        this.ftcTelemetry = opMode.telemetry;
-        this.telemetry = PanelsTelemetry.INSTANCE.getTelemetry();
+        this.telemetry = opMode.telemetry;
+//        this.telemetry = PanelsTelemetry.INSTANCE.getTelemetry();
     }
 
     /**
@@ -209,7 +209,8 @@ public abstract class BaseComponent implements Component {
     }
 
     protected void updateTelemetry(){
-        telemetry.update(ftcTelemetry);
+        telemetry.update();
+//        telemetry.update(ftcTelemetry);
     }
 
 

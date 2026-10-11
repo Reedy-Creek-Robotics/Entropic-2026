@@ -3,7 +3,7 @@ package org.firstinspires.ftc.teamcode.components;
 import android.annotation.SuppressLint;
 
 
-import com.bylazar.telemetry.TelemetryManager;
+//import com.bylazar.telemetry.TelemetryManager;
 import com.pedropathing.follower.Follower;
 import com.pedropathing.geometry.Pose;
 import com.qualcomm.hardware.lynx.LynxModule;
@@ -11,6 +11,7 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.util.ErrorUtil;
 import org.firstinspires.ftc.teamcode.util.FileUtil;
 
@@ -25,7 +26,6 @@ public class Robot extends BaseComponent {
 
     // START COMPONENTS
     private DriveTrain driveTrain;
-    private Turret turret;
     private Shooter shooter;
     private Transfer transfer;
     private Endoscope endoscope;
@@ -49,14 +49,13 @@ public class Robot extends BaseComponent {
 
         // START COMPONENTS
         driveTrain = new DriveTrain(context, this);
-        turret = new Turret(context, this);
         shooter = new Shooter(context, this);
         transfer = new Transfer(context, this);
         endoscope = new Endoscope(context, this);
         intake = new Intake(context, this);
         // END COMPONENTS
 
-        addSubComponents(driveTrain, intake, transfer, turret, shooter, endoscope);
+        addSubComponents(driveTrain, intake, transfer, shooter, endoscope);
     }
 
     public RobotContext getRobotContext() {
@@ -113,8 +112,10 @@ public class Robot extends BaseComponent {
         super.update();
 
         // Update telemetry once per iteration after all components have been called.
-        telemetry.update(ftcTelemetry);
+//        telemetry.update(ftcTelemetry);
+        telemetry.update();
     }
+
 
     public void saveStateToDisk() {
         saveStateToDisk("robot-state");
@@ -123,7 +124,6 @@ public class Robot extends BaseComponent {
     public void saveStateToDisk(String filename) {
         saveStateToDisk(filename, new RobotState(
                 follower.getPose(),
-                turret.getPositionTicks(),
                 0, //ToDo get pattern from AMS
                 new int[] {}, //ToDo get balls from AMS
                 context.alliance
@@ -141,7 +141,6 @@ public class Robot extends BaseComponent {
                 state.posY(),
                 state.posH(),
                 state.alliance(),
-                state.posT(),
                 state.pattern(),
                 state.balls()
         );
@@ -204,8 +203,6 @@ public class Robot extends BaseComponent {
                     posH
             ));
             context.alliance = alliance;
-            turret.setPositionTicks(posT);
-            //ToDo: Jonathan, add logic here to get pattern and balls into the ball management system
         }
 
             // Now that the position has been consumed, remove the file
@@ -222,7 +219,7 @@ public class Robot extends BaseComponent {
     }
 
     public void onStart() {
-        ftcTelemetry.clear();
+        telemetry.clear();
     }
 
     /**
@@ -257,9 +254,6 @@ public class Robot extends BaseComponent {
     public DriveTrain getDriveTrain() {
         return driveTrain;
     }
-    public Turret getTurret() {
-        return turret;
-    }
     public Shooter getShooter() {
         return shooter;
     }
@@ -272,7 +266,7 @@ public class Robot extends BaseComponent {
     public Endoscope getEndoscope(){
         return endoscope;
     }
-    public TelemetryManager getTelemetry(){
+    public Telemetry getTelemetry(){
         return telemetry;
     }
     public Pose getPose(){
@@ -295,7 +289,6 @@ public class Robot extends BaseComponent {
     public static class RobotState {
         Pose pose;
         boolean alliance;
-        int turretPos;
         /**
          * 0 - N/A<br>
          * 1 - GPP<br>
@@ -305,10 +298,9 @@ public class Robot extends BaseComponent {
         int pattern;
         int[] balls;
 
-        public RobotState(Pose pose, int turretPos, int pattern, int[] balls, boolean alliance){
+        public RobotState(Pose pose, int pattern, int[] balls, boolean alliance){
             this.pose = pose;
             this.alliance = alliance;
-            this.turretPos = turretPos;
             this.pattern = pattern;
             this.balls = balls;
         }
@@ -327,10 +319,6 @@ public class Robot extends BaseComponent {
 
         public boolean alliance(){
             return alliance;
-        }
-
-        public int posT(){
-            return turretPos;
         }
 
         public int pattern(){

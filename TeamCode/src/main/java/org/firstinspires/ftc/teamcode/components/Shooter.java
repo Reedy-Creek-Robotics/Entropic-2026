@@ -96,7 +96,9 @@ public class Shooter extends BaseComponent {
 
     @Override
     public void update() {
-        goalPosition = context.alliance ? Turret.blueGoal : Turret.redGoal;
+        Pose redGoal = new Pose(140, 144 , 0);
+        Pose blueGoal = new Pose(4, 144, 0);
+        goalPosition = context.alliance ? blueGoal : redGoal;
         telemetry.addLine(String.format("Shooter Velocity: %4d / %4d  (tick) | Ready: %b",
                 (int) shooter.getVelocity(),
                 setVelocity,
