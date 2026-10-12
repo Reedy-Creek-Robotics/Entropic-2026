@@ -1,15 +1,16 @@
 package org.firstinspires.ftc.teamcode.components;
 
-//import com.bylazar.configurables.annotations.Configurable;
+import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.teamcode.components.subComponents.BaseComponent;
+import org.firstinspires.ftc.teamcode.components.subComponents.Command;
+import org.firstinspires.ftc.teamcode.components.subComponents.RobotContext;
 import org.firstinspires.ftc.teamcode.util.HardwareUtil;
 import org.firstinspires.ftc.teamcode.util.LogCatUtil;
-
-import org.firstinspires.ftc.teamcode.components.base.BaseComponent;
-import org.firstinspires.ftc.teamcode.components.base.Command;
 
 //@Configurable
 public class Intake extends BaseComponent {
@@ -17,7 +18,9 @@ public class Intake extends BaseComponent {
     LogCatUtil log;
     HardwareUtil hardwareUtil;
 
-    DcMotorEx intakeMotor;
+    Servo intakeServo;
+
+    DcMotorEx transferMotor;
 
     Robot robot;
 
@@ -43,16 +46,18 @@ public class Intake extends BaseComponent {
 
         this.robot = robot;
 
-        intakeMotor = hardwareUtil.getMotorEx("intake");
+        intakeServo = hardwareUtil.getServo("intake");
+        transferMotor = hardwareUtil.getMotorEx("transfer");
     }
 
     @Override
     public void init() {
-        intakeMotor.setDirection(DcMotorSimple.Direction.REVERSE);
+        transferMotor.setDirection(DcMotorSimple.Direction.FORWARD);
+        transferMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
 
     public void setIntakePower(double power){
-        intakeMotor.setPower(power);
+        intakeServo.setPosition((power+1)/2);
     }
 
     public void runIntakeCommand(double power){
@@ -61,6 +66,18 @@ public class Intake extends BaseComponent {
 
     public void timedIntake(double power, double timeMs){
         robot.executeCommand(new TimedIntake(power, timeMs));
+    }
+
+    public void setTransferPower(double power){
+        transferMotor.setPower(power);
+    }
+
+    public void runTransferCommand(double power){
+        robot.executeCommand(new RunTransfer(power));
+    }
+
+    public void timedTransfer(double power, double timeMs){
+        robot.executeCommand(new TimedTransfer(power, timeMs));
     }
 
     private class RunIntake implements Command {
@@ -72,7 +89,7 @@ public class Intake extends BaseComponent {
 
         @Override
         public void start() {
-            intakeMotor.setPower(power);
+            setIntakePower(power);
         }
 
         @Override
@@ -99,12 +116,62 @@ public class Intake extends BaseComponent {
 
         @Override
         public void start() {
-            intakeMotor.setPower(power);
+            setIntakePower(power);
         }
 
         @Override
         public void stop() {
-            intakeMotor.setPower(0);
+            setIntakePower(0);
+        }
+
+        @Override
+        public boolean update() {
+            return timer.milliseconds() >= timeMs;
+        }
+    }
+
+    private class RunTransfer implements Command {
+        double power;
+
+        public RunTransfer(double power){
+            this.power = power;
+        }
+
+        @Override
+        public void start() {
+            setTransferPower(power);
+        }
+
+        @Override
+        public void stop() {
+
+        }
+
+        @Override
+        public boolean update() {
+            return true;
+        }
+    }
+
+    private class TimedTransfer implements Command {
+        ElapsedTime timer;
+        double power;
+        double timeMs;
+
+        public TimedTransfer(double power, double timeMs){
+            this.power = power;
+            this.timeMs = timeMs;
+            timer = new ElapsedTime();
+        }
+
+        @Override
+        public void start() {
+            setTransferPower(power);
+        }
+
+        @Override
+        public void stop() {
+            setTransferPower(0);
         }
 
         @Override

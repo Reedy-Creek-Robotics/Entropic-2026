@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.components.base;
+package org.firstinspires.ftc.teamcode.components.subComponents;
 
 public class ParallelCommand implements Command {
     private Command[] commands;

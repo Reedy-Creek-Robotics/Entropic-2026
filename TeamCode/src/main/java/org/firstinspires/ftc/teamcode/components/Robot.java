@@ -3,21 +3,19 @@ package org.firstinspires.ftc.teamcode.components;
 import android.annotation.SuppressLint;
 
 
-//import com.bylazar.telemetry.TelemetryManager;
-import com.pedropathing.follower.Follower;
-import com.pedropathing.geometry.Pose;
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.teamcode.components.subComponents.BaseComponent;
+import org.firstinspires.ftc.teamcode.components.subComponents.RobotContext;
+import org.firstinspires.ftc.teamcode.components.subComponents.RobotDescriptor;
 import org.firstinspires.ftc.teamcode.util.ErrorUtil;
 import org.firstinspires.ftc.teamcode.util.FileUtil;
 
 import java.util.List;
-
-import org.firstinspires.ftc.teamcode.components.base.BaseComponent;
 
 public class Robot extends BaseComponent {
     private static final double VOLTAGE_WARNING_THRESHOLD = 12.0;
@@ -27,16 +25,12 @@ public class Robot extends BaseComponent {
     // START COMPONENTS
     private DriveTrain driveTrain;
     private Shooter shooter;
-    private Transfer transfer;
-    private Endoscope endoscope;
     private Intake intake;
     // END COMPONENTS
 
     private int updateCount;
     private ElapsedTime initTime;
     private ElapsedTime firstUpdateTime;
-
-    private Follower follower;
 
     public Robot(OpMode opMode){
         this(opMode, false);
@@ -50,12 +44,10 @@ public class Robot extends BaseComponent {
         // START COMPONENTS
         driveTrain = new DriveTrain(context, this);
         shooter = new Shooter(context, this);
-        transfer = new Transfer(context, this);
-        endoscope = new Endoscope(context, this);
         intake = new Intake(context, this);
         // END COMPONENTS
 
-        addSubComponents(driveTrain, intake, transfer, shooter, endoscope);
+        addSubComponents(driveTrain, intake, shooter);
     }
 
     public RobotContext getRobotContext() {
@@ -65,8 +57,6 @@ public class Robot extends BaseComponent {
     @Override
     public void init() {
         super.init();
-
-        follower = driveTrain.getFollower();
 
         double voltage = computeBatteryVoltage();
         if (voltage < VOLTAGE_WARNING_THRESHOLD) {
@@ -106,8 +96,6 @@ public class Robot extends BaseComponent {
             lynxModule.clearBulkCache();
         }
 
-        follower.update();
-
         // Allow all the subcomponents to do their work.
         super.update();
 
@@ -122,12 +110,6 @@ public class Robot extends BaseComponent {
     }
 
     public void saveStateToDisk(String filename) {
-        saveStateToDisk(filename, new RobotState(
-                follower.getPose(),
-                0, //ToDo get pattern from AMS
-                new int[] {}, //ToDo get balls from AMS
-                context.alliance
-        ));
     }
 
     public void saveStateToDisk(RobotState state) {
@@ -137,9 +119,6 @@ public class Robot extends BaseComponent {
     public void saveStateToDisk(String filename, RobotState state) {
         FileUtil.writeLines(
                 filename,
-                state.posX(),
-                state.posY(),
-                state.posH(),
                 state.alliance(),
                 state.pattern(),
                 state.balls()
@@ -197,11 +176,6 @@ public class Robot extends BaseComponent {
                     }
                 }
 
-            follower.setPose(new Pose(
-                    posX,
-                    posY,
-                    posH
-            ));
             context.alliance = alliance;
         }
 
@@ -257,20 +231,11 @@ public class Robot extends BaseComponent {
     public Shooter getShooter() {
         return shooter;
     }
-    public Transfer getTransfer(){
-        return transfer;
-    }
     public Intake getIntake(){
         return intake;
     }
-    public Endoscope getEndoscope(){
-        return endoscope;
-    }
     public Telemetry getTelemetry(){
         return telemetry;
-    }
-    public Pose getPose(){
-        return follower.getPose();
     }
 
     private double computeBatteryVoltage() {
@@ -287,7 +252,6 @@ public class Robot extends BaseComponent {
 
 
     public static class RobotState {
-        Pose pose;
         boolean alliance;
         /**
          * 0 - N/A<br>
@@ -298,23 +262,10 @@ public class Robot extends BaseComponent {
         int pattern;
         int[] balls;
 
-        public RobotState(Pose pose, int pattern, int[] balls, boolean alliance){
-            this.pose = pose;
+        public RobotState(int pattern, int[] balls, boolean alliance){
             this.alliance = alliance;
             this.pattern = pattern;
             this.balls = balls;
-        }
-
-        public double posX(){
-            return pose.getX();
-        }
-
-        public double posY(){
-            return pose.getY();
-        }
-
-        public double posH(){
-            return pose.getHeading();
         }
 
         public boolean alliance(){

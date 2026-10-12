@@ -1,19 +1,18 @@
 package org.firstinspires.ftc.teamcode.components;
 
-import static org.firstinspires.ftc.teamcode.components.RobotDescriptor.DriveTuner;
-import static org.firstinspires.ftc.teamcode.components.RobotDescriptor.OdometryTuner;
+import static org.firstinspires.ftc.teamcode.components.subComponents.RobotDescriptor.DriveTuner;
+import static org.firstinspires.ftc.teamcode.components.subComponents.RobotDescriptor.OdometryTuner;
 
 import android.annotation.SuppressLint;
 
-import com.pedropathing.follower.Follower;
-import com.pedropathing.geometry.Pose;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
 import com.qualcomm.robotcore.hardware.configuration.typecontainers.MotorConfigurationType;
 
-import org.firstinspires.ftc.teamcode.pedro.Constants;
+import org.firstinspires.ftc.teamcode.components.subComponents.BaseComponent;
+import org.firstinspires.ftc.teamcode.components.subComponents.RobotContext;
 import org.firstinspires.ftc.teamcode.util.DriveUtil;
 import org.firstinspires.ftc.teamcode.util.HardwareUtil;
 import org.firstinspires.ftc.teamcode.util.LogCatUtil;
@@ -21,15 +20,11 @@ import org.firstinspires.ftc.teamcode.util.LogCatUtil;
 import java.util.Arrays;
 import java.util.List;
 
-import org.firstinspires.ftc.teamcode.components.base.BaseComponent;
-
 @SuppressLint("DefaultLocale")
 public class DriveTrain extends BaseComponent {
 
     private DcMotorEx leftFront, leftRear, rightRear, rightFront;
     private List<DcMotorEx> motors;
-
-    private Follower follower;
 
     private VoltageSensor batteryVoltageSensor;
 
@@ -40,8 +35,6 @@ public class DriveTrain extends BaseComponent {
 
     public static DriveTuner driveTuner;
     public static OdometryTuner odometryTuner;
-
-    Pose curPose;
 
     public DriveTrain(RobotContext context, Robot robot) {
         super(context);
@@ -55,8 +48,6 @@ public class DriveTrain extends BaseComponent {
         odometryTuner = descriptor.ODOMETRY_TUNER;
 
         batteryVoltageSensor = hardwareMap.voltageSensor.iterator().next();
-
-        follower = Constants.createFollower(hardwareMap);
     }
 
     @Override
@@ -95,8 +86,6 @@ public class DriveTrain extends BaseComponent {
 
     @Override
     public void update() {
-        curPose = follower.getPose();
-        telemetry.addLine(String.format("XYH %6.2f %6.2f %6.2f  (inch) (degree)", curPose.getX(), curPose.getY(), Math.toDegrees(curPose.getHeading())));
     }
 
     public DriveTrain(RobotContext context){
@@ -125,14 +114,6 @@ public class DriveTrain extends BaseComponent {
         for (DcMotorEx motor : motors) {
             motor.setPIDFCoefficients(runMode, compensatedCoefficients);
         }
-    }
-
-    public Follower getFollower(){
-        return follower;
-    }
-
-    public void setPos(Pose newPose){
-        follower.setPose(newPose);
     }
 
     public void drive(double drive, double strafe, double turn, double speedFactor) {

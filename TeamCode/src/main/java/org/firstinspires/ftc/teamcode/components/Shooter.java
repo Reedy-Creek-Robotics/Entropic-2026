@@ -1,7 +1,7 @@
 package org.firstinspires.ftc.teamcode.components;
 
-import com.pedropathing.follower.Follower;
-import com.pedropathing.geometry.Pose;
+import android.annotation.SuppressLint;
+
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
@@ -11,19 +11,18 @@ import com.qualcomm.robotcore.hardware.VoltageSensor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
+import org.firstinspires.ftc.teamcode.components.subComponents.BaseComponent;
+import org.firstinspires.ftc.teamcode.components.subComponents.Command;
+import org.firstinspires.ftc.teamcode.components.subComponents.RobotContext;
 import org.firstinspires.ftc.teamcode.util.HardwareUtil;
 import org.firstinspires.ftc.teamcode.util.LogCatUtil;
 
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.Dictionary;
 import java.util.Enumeration;
-import java.util.Hashtable;
 import java.util.List;
 
-import org.firstinspires.ftc.teamcode.components.base.BaseComponent;
-import org.firstinspires.ftc.teamcode.components.base.Command;
-
+@SuppressLint("DefaultLocale")
 /**
  * Depends on:
  * DriveTrain
@@ -34,32 +33,19 @@ public class Shooter extends BaseComponent {
 
     double degPerTick = 12.8571428571;
 
-    static Dictionary<Integer, Integer> speeds = new Hashtable<>();
-
     int velocityTolerance = 60;
-    int stabilizationTime = 750;
     int holdVelocity = 1600;
 
-    double shotCurrent = 4;
-
     private int setVelocity;
-
-    boolean autoSpeed = true;
 
     private final Robot robot;
 
     ElapsedTime shootTimer;
 
-    Follower follower;
-    
     VoltageSensor batteryVoltageSensor;
     
     LogCatUtil log;
     HardwareUtil hardwareUtil;
-
-    Double distanceToGoal;
-
-    Pose goalPosition;
 
     public Shooter(RobotContext context, Robot robot) {
         super(context);
@@ -79,36 +65,16 @@ public class Shooter extends BaseComponent {
         shooter.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
         setPIDFCoefficients(new PIDFCoefficients(600, 3, 0, 0, MotorControlAlgorithm.PIDF));
         shootTimer = new ElapsedTime();
-
-        // All distances were measured to the april tag, 18in is added for the distance to the corner from the tag
-        speeds.put(46+18, 1260);
-        speeds.put(56+18, 1260);
-        speeds.put(66+18, 1200);
-        speeds.put(76+18, 1240);
-        speeds.put(86+18, 1280);
-        speeds.put(96+18, 1300);
-        speeds.put(116+18, 1380);
-        speeds.put(126+18, 1440);
-        speeds.put(134+18, 1480);
-
-        follower = robot.getDriveTrain().getFollower();
     }
+
 
     @Override
     public void update() {
-        Pose redGoal = new Pose(140, 144 , 0);
-        Pose blueGoal = new Pose(4, 144, 0);
-        goalPosition = context.alliance ? blueGoal : redGoal;
         telemetry.addLine(String.format("Shooter Velocity: %4d / %4d  (tick) | Ready: %b",
                 (int) shooter.getVelocity(),
                 setVelocity,
                 isBusy()));
-        telemetry.addData("Distance", follower.getPose().distanceFrom(goalPosition));
 
-        if(autoSpeed) {
-            distanceToGoal = follower.getPose().distanceFrom(goalPosition);
-            setVelocity(velocityFromDistance(distanceToGoal));
-        }
         telemetry.addData("Shooter Current", getShooterCurrent());
     }
 
@@ -175,28 +141,6 @@ public class Shooter extends BaseComponent {
         setPIDFCoefficients(shooter.getMode(), coefficients);
     }
 
-    public int velocityFromDistance(double distance){
-        log.debug("distance : " + distance + " | speed : " + speeds.get(findClosestByStream(speeds.keys(), distance)) + " | real : " + shooter.getVelocity());
-//         return speeds.get(findClosestByStream(speeds.keys(), distance));
-
-        if (distance < 46+18) {
-            distance = 46+18;
-        }
-        // search through speeds values to find the 2 neighbouring values
-        int lowerBound = findClosestSmallerByStream(speeds.keys(), distance);
-        int upperBound = findClosestLargerByStream(speeds.keys(), distance);
-
-        // if the bot is exactly on a distance (or beyond the boundaries), return that speed to prevent division by 0
-        if (lowerBound == upperBound) {
-            return speeds.get(lowerBound);
-        }
-
-        // interpolate values with point slope
-        double slope = (double) (speeds.get(upperBound) - speeds.get(lowerBound)) / (upperBound - lowerBound);
-        double expectedTPS = slope * (distance - lowerBound) + speeds.get(lowerBound);
-        return (int) expectedTPS;
-    }
-
     private int findClosestByStream(Enumeration<Integer> sortedNumbers, double target) {
         return findClosestByStream(Collections.list(sortedNumbers), target);
     }
@@ -206,9 +150,11 @@ public class Shooter extends BaseComponent {
                 .min(Comparator.comparingInt(o -> (int) Math.abs(o - target)))
                 .get();
     }
+
     private int findClosestSmallerByStream(Enumeration<Integer> sortedNumbers, double target) {
         return findClosestSmallerByStream(Collections.list(sortedNumbers), target);
     }
+
     private int findClosestSmallerByStream(List<Integer> numbers, double target) {
         // returns the largest value less than the target, or the smallest value if none exists
         if (target < Collections.min(numbers)) {
@@ -218,9 +164,11 @@ public class Shooter extends BaseComponent {
                 .max(Comparator.comparingInt(o -> (int) o <= target ? (int) o : Integer.MIN_VALUE))
                 .get();
     }
+
     private int findClosestLargerByStream(Enumeration<Integer> sortedNumbers, double target) {
         return findClosestLargerByStream(Collections.list(sortedNumbers), target);
     }
+
     private int findClosestLargerByStream(List<Integer> numbers, double target) {
         // returns the smallest value greater than the target, or the largest value if none exists
         if (target > Collections.max(numbers)) {
@@ -229,14 +177,6 @@ public class Shooter extends BaseComponent {
         return numbers.stream()
                 .min(Comparator.comparingInt(o -> (int) o >= target ? (int) o : Integer.MAX_VALUE))
                 .get();
-    }
-
-    public boolean setAutoSpeed(boolean autoSpeed){
-        return this.autoSpeed = autoSpeed;
-    }
-
-    public boolean getAutoSpeed(){
-        return autoSpeed;
     }
 
     /**
@@ -273,11 +213,6 @@ public class Shooter extends BaseComponent {
         log.debug("Set Velocity: " + setVelocity);
         log.debug("Velocity Tolerance: " + velocityTolerance);
 
-        log.debug("is Busy: " + (shooter.getVelocity() < setVelocity - velocityTolerance && shooter.getVelocity() > setVelocity + velocityTolerance));
-        log.debug("Jonathan is Smarter: " + String.valueOf((shooter.getVelocity() < (setVelocity - velocityTolerance)) && (shooter.getVelocity() > (setVelocity + velocityTolerance))));
-
-        log.debug("Auto Speed: " + autoSpeed);
-
         return (shooter.getVelocity() < (setVelocity - velocityTolerance)) && (shooter.getVelocity() > (setVelocity + velocityTolerance));
 
     }
@@ -288,14 +223,6 @@ public class Shooter extends BaseComponent {
      */
     public void spinToVelocity(int velocity){
         executeCommand(new SpinToVelocity(velocity));
-    }
-
-    public void shootAtDistance(int distance){
-        int velocity;
-        if((velocity = velocityFromDistance(distance)) == 0){
-            velocity = 1600;
-        }
-        shootAtVelocity(velocity);
     }
 
     public double getShooterCurrent(){

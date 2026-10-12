@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.components.base;
+package org.firstinspires.ftc.teamcode.components.subComponents;
 
 //import com.bylazar.telemetry.PanelsTelemetry;
 //import com.bylazar.telemetry.TelemetryManager;
@@ -13,9 +13,6 @@ import org.firstinspires.ftc.teamcode.util.LogCatUtil;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-
-import org.firstinspires.ftc.teamcode.components.RobotContext;
-import org.firstinspires.ftc.teamcode.components.RobotDescriptor;
 
 public abstract class BaseComponent implements Component {
 
@@ -55,7 +52,7 @@ public abstract class BaseComponent implements Component {
     /**
      * Executes the given command.  If there's another command in progress, this one will be added to the queue.
      */
-    protected void executeCommand(Command command) {
+    public void executeCommand(Command command) {
 
         /*// Check if the command can be combined with the last command in the queue.
         Command lastCommandInQueue = getLastCommandInQueue();
