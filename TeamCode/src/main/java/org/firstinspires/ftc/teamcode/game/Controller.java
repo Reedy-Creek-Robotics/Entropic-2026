@@ -267,6 +267,7 @@ public class Controller {
 
     public boolean isPressed(Button button) {
 
+        //TODO: move this into aliases
         switch(button){
             case SOUTH:
                 button = Button.CROSS;
