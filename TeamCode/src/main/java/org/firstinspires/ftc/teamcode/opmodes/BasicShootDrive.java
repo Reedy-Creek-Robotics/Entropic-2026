@@ -22,8 +22,16 @@ public class BasicShootDrive extends OpMode {
     protected Controller driver;
     protected Controller meta;
 
-    Map<Controller.Button, ButtonEffect> controlMapDriver;
-    Map<Controller.Button, ButtonEffect> controlMapMeta;
+    // Control maps map each button to its functionality for clean assignment and quick looping
+    // analog inputs will need to be handled separately
+    Map<Controller.Button, ButtonEffect> controlMapDriver = Map.of(
+            Controller.Button.NORTH, this::shoot,
+            Controller.Button.DPAD_UP, this::intake,
+            Controller.Button.DPAD_DOWN, this::purge
+    );
+    Map<Controller.Button, ButtonEffect> controlMapMeta = Map.of(
+            // add meta controls here
+    );;
 
 
     @Override
@@ -35,21 +43,11 @@ public class BasicShootDrive extends OpMode {
         meta = new Controller(gamepad2);
 
         robot.init();
-
-        controlMapDriver = Map.of(
-                Controller.Button.NORTH, this::shoot,
-                Controller.Button.DPAD_UP, this::intake,
-                Controller.Button.DPAD_DOWN, this::purge
-        );
-        controlMapMeta = Map.of(
-
-        );
     }
 
     @Override
     public void loop() {
         /* DRIVER CONTROLS */
-
         //drive, strafe, and turning
         double drive, strafe, turn;
         drive = driver.analogValue(LEFT_STICK_Y);
@@ -58,35 +56,32 @@ public class BasicShootDrive extends OpMode {
         robot.getDriveTrain().drive(drive, strafe, turn);
 
         // run through all driver buttons
-        for (Controller.Button button: controlMapDriver.keySet()) {
-            if (driver.isButtonDown(button)) {
-                controlMapDriver.get(button).run();
+        for (Map.Entry<Controller.Button, ButtonEffect> control: controlMapDriver.entrySet()) {
+            if (driver.isButtonDown(control.getKey())) {
+                control.getValue().run();
             }
         }
 
         /* META CONTROLS */
-
         // run through all meta buttons
-        for (Controller.Button button: controlMapDriver.keySet()) {
-            if (meta.isButtonDown(button)) {
-                controlMapDriver.get(button).run();
+        for (Map.Entry<Controller.Button, ButtonEffect> control: controlMapMeta.entrySet()) {
+            if (meta.isButtonDown(control.getKey())) {
+                control.getValue().run();
             }
         }
 
-        /* UPDATE TELEMETRY */
-
+        /* UPDATE OTHER STUFF */
         telemetry.addData("alliance", robotContext.getAlliance());
         robot.update();
     }
 
     /**
-     * The Action functional interface stores the effect
+     * The ButtonEffect functional interface stores the effect of a button press as a method
      */
     @FunctionalInterface
     private interface ButtonEffect {
         public void run();
     }
-    private void noAction(){}
     private void shoot() {
         //TODO: Implement
     }
