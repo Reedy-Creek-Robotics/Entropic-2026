@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.components.subComponents;
+package org.firstinspires.ftc.teamcode.components.core;
 
 public class SequentialCommand implements Command {
     private Command[] commands;

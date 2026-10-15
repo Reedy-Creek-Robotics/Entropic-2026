@@ -1,6 +1,6 @@
 package org.firstinspires.ftc.teamcode.util;
 
-import static org.firstinspires.ftc.teamcode.components.subComponents.BaseComponent.logPrefix;
+import static org.firstinspires.ftc.teamcode.components.core.BaseComponent.logPrefix;
 
 import android.util.Log;
 

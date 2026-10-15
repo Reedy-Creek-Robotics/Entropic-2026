@@ -7,13 +7,14 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.MotorControlAlgorithm;
 import com.qualcomm.robotcore.hardware.PIDFCoefficients;
+import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
-import org.firstinspires.ftc.teamcode.components.subComponents.BaseComponent;
-import org.firstinspires.ftc.teamcode.components.subComponents.Command;
-import org.firstinspires.ftc.teamcode.components.subComponents.RobotContext;
+import org.firstinspires.ftc.teamcode.components.core.BaseComponent;
+import org.firstinspires.ftc.teamcode.components.core.Command;
+import org.firstinspires.ftc.teamcode.components.core.RobotContext;
 import org.firstinspires.ftc.teamcode.util.HardwareUtil;
 import org.firstinspires.ftc.teamcode.util.LogCatUtil;
 
@@ -23,15 +24,17 @@ import java.util.Enumeration;
 import java.util.List;
 
 @SuppressLint("DefaultLocale")
-/**
- * Depends on:
- * DriveTrain
- */
 public class Shooter extends BaseComponent {
 
     DcMotorEx shooter;
+    Servo gate;
 
     double degPerTick = 12.8571428571;
+
+    double gateOpenPos = 0.98;
+    double gateClosePos = 0.8;
+
+    boolean gateOpen;
 
     int velocityTolerance = 60;
     int holdVelocity = 1600;
@@ -54,6 +57,7 @@ public class Shooter extends BaseComponent {
         this.robot = robot;
 
         shooter = hardwareUtil.getMotorEx("shooter");
+        gate = hardwareUtil.getServo("shooterGate");
         batteryVoltageSensor = hardwareMap.voltageSensor.iterator().next();
     }
 
@@ -61,7 +65,7 @@ public class Shooter extends BaseComponent {
     public void init() {
         
         shooter.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        shooter.setDirection(DcMotorSimple.Direction.REVERSE);
+        shooter.setDirection(DcMotorSimple.Direction.FORWARD);
         shooter.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
         setPIDFCoefficients(new PIDFCoefficients(600, 3, 0, 0, MotorControlAlgorithm.PIDF));
         shootTimer = new ElapsedTime();
@@ -76,6 +80,7 @@ public class Shooter extends BaseComponent {
                 isBusy()));
 
         telemetry.addData("Shooter Current", getShooterCurrent());
+        telemetry.addData("Gate Open", gateOpen);
     }
 
     public double velocityTicksToDegrees(int ticks) {
@@ -204,6 +209,16 @@ public class Shooter extends BaseComponent {
     public void holdVelocity(){
         shooter.setVelocity(holdVelocity);
         setVelocity = holdVelocity;
+    }
+
+    public void openGate(){
+        gate.setPosition(gateOpenPos);
+        gateOpen = true;
+    }
+
+    public void closeGate(){
+        gate.setPosition(gateClosePos);
+        gateOpen = false;
     }
 
     @Override

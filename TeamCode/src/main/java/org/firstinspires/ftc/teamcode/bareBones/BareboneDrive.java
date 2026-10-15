@@ -3,7 +3,7 @@ package org.firstinspires.ftc.teamcode.bareBones;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
-import org.firstinspires.ftc.teamcode.components.subComponents.BaseComponent;
+import org.firstinspires.ftc.teamcode.components.core.BaseComponent;
 import org.firstinspires.ftc.teamcode.components.DriveTrain;
 import org.firstinspires.ftc.teamcode.game.Controller;
 

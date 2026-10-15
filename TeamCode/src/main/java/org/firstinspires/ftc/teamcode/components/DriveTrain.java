@@ -1,7 +1,7 @@
 package org.firstinspires.ftc.teamcode.components;
 
-import static org.firstinspires.ftc.teamcode.components.subComponents.RobotDescriptor.DriveTuner;
-import static org.firstinspires.ftc.teamcode.components.subComponents.RobotDescriptor.OdometryTuner;
+import static org.firstinspires.ftc.teamcode.components.core.RobotDescriptor.DriveTuner;
+import static org.firstinspires.ftc.teamcode.components.core.RobotDescriptor.OdometryTuner;
 
 import android.annotation.SuppressLint;
 
@@ -11,8 +11,8 @@ import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
 import com.qualcomm.robotcore.hardware.configuration.typecontainers.MotorConfigurationType;
 
-import org.firstinspires.ftc.teamcode.components.subComponents.BaseComponent;
-import org.firstinspires.ftc.teamcode.components.subComponents.RobotContext;
+import org.firstinspires.ftc.teamcode.components.core.BaseComponent;
+import org.firstinspires.ftc.teamcode.components.core.RobotContext;
 import org.firstinspires.ftc.teamcode.util.DriveUtil;
 import org.firstinspires.ftc.teamcode.util.HardwareUtil;
 import org.firstinspires.ftc.teamcode.util.LogCatUtil;

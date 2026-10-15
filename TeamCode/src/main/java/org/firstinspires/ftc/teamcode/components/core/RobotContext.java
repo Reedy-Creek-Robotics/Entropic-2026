@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.components.subComponents;
+package org.firstinspires.ftc.teamcode.components.core;
 
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;

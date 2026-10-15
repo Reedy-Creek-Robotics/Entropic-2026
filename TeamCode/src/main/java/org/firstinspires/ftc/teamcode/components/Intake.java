@@ -6,9 +6,9 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.teamcode.components.subComponents.BaseComponent;
-import org.firstinspires.ftc.teamcode.components.subComponents.Command;
-import org.firstinspires.ftc.teamcode.components.subComponents.RobotContext;
+import org.firstinspires.ftc.teamcode.components.core.BaseComponent;
+import org.firstinspires.ftc.teamcode.components.core.Command;
+import org.firstinspires.ftc.teamcode.components.core.RobotContext;
 import org.firstinspires.ftc.teamcode.util.HardwareUtil;
 import org.firstinspires.ftc.teamcode.util.LogCatUtil;
 
@@ -57,7 +57,7 @@ public class Intake extends BaseComponent {
     }
 
     public void setIntakePower(double power){
-        intakeServo.setPosition((power+1)/2);
+        intakeServo.setPosition(((-power)+1)/2);
     }
 
     public void runIntakeCommand(double power){
@@ -66,6 +66,11 @@ public class Intake extends BaseComponent {
 
     public void timedIntake(double power, double timeMs){
         robot.executeCommand(new TimedIntake(power, timeMs));
+    }
+
+    public void setCombinedPower(double power){
+        setIntakePower(power);
+        setTransferPower(power);
     }
 
     public void setTransferPower(double power){

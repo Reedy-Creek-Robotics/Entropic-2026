@@ -9,9 +9,9 @@ import com.qualcomm.robotcore.hardware.VoltageSensor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.teamcode.components.subComponents.BaseComponent;
-import org.firstinspires.ftc.teamcode.components.subComponents.RobotContext;
-import org.firstinspires.ftc.teamcode.components.subComponents.RobotDescriptor;
+import org.firstinspires.ftc.teamcode.components.core.BaseComponent;
+import org.firstinspires.ftc.teamcode.components.core.RobotContext;
+import org.firstinspires.ftc.teamcode.components.core.RobotDescriptor;
 import org.firstinspires.ftc.teamcode.util.ErrorUtil;
 import org.firstinspires.ftc.teamcode.util.FileUtil;
 
