@@ -17,7 +17,7 @@ public class BasicShootDrive extends OpMode {
     RobotContext robotContext;
     Robot robot;
 
-    int shooterSpeed = 1500;
+    int shooterSpeed = 1000;
 
     boolean shooterOn = false;
 
@@ -97,7 +97,7 @@ public class BasicShootDrive extends OpMode {
 //        }
 
         /* UPDATE OTHER STUFF */
-        telemetry.addData("alliance", robotContext.getAlliance());
+        telemetry.addData("Alliance", robotContext.getAlliance());
         telemetry.addData("Shooter On", shooterOn);
         robot.update();
     }

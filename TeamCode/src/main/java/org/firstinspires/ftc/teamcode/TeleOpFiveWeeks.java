@@ -1,11 +1,13 @@
 package org.firstinspires.ftc.teamcode;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
 import org.firstinspires.ftc.teamcode.components.Intake;
 import org.firstinspires.ftc.teamcode.components.Robot;
 import org.firstinspires.ftc.teamcode.game.Controller;
 
+@Disabled
 public class TeleOpFiveWeeks extends OpMode {
 
     Robot robot;
