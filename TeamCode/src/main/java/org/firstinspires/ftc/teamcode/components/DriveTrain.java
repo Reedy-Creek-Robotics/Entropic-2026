@@ -129,8 +129,9 @@ public class DriveTrain extends BaseComponent {
         drive(drive, strafe, turn, 1);
     }
 
+    /**Note: Currently not implemented*/
     public void driverRelative(double drive, double strafe, double turn) {
-
+        //TODO: implement (I don't feel like doing trig right now)
     }
 
 }

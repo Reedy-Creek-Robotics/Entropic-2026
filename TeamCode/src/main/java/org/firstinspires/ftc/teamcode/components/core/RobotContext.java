@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.components.core;
 
+//TODO: consider adding starting location to robot context
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
@@ -18,8 +19,8 @@ public class RobotContext {
     public DriveUtil driveUtil;
 
     /**
-     * false - red (tag 24)<br>
-     * true - blue (tag 20)
+     * false - red<br>
+     * true - blue
      */
     public boolean alliance;
 
@@ -30,8 +31,8 @@ public class RobotContext {
     }
 
     /**
-     * false - red (tag 24)<br>
-     * true - blue (tag 20)
+     * false - red<br>
+     * true - blue
      */
     public RobotContext(OpMode opMode, RobotDescriptor descriptor, boolean alliance) {
         this.opMode = opMode;
@@ -57,8 +58,8 @@ public class RobotContext {
 
 
     /**
-     * false - red (tag 24)<br>
-     * true - blue (tag 20)
+     * false - red<br>
+     * true - blue
      * @return alliance as a boolean
      */
     public boolean getAlliance() {

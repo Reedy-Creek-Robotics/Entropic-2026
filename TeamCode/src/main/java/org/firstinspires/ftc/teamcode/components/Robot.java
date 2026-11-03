@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.components;
 import android.annotation.SuppressLint;
 
 
+import com.pedropathing.geometry.Pose;
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
@@ -26,8 +27,8 @@ public class Robot extends BaseComponent {
     private DriveTrain driveTrain;
     private Shooter shooter;
     private Intake intake;
+    private Turret turret;
     // END COMPONENTS
-
     private int updateCount;
     private ElapsedTime initTime;
     private ElapsedTime firstUpdateTime;
@@ -43,11 +44,12 @@ public class Robot extends BaseComponent {
 
         // START COMPONENTS
         driveTrain = new DriveTrain(context, this);
-        shooter = new Shooter(context, this);
         intake = new Intake(context, this);
+        turret = new Turret(context, this);
+        shooter = new Shooter(context, this);
         // END COMPONENTS
 
-        addSubComponents(driveTrain, intake, shooter);
+        addSubComponents(driveTrain, intake, turret, shooter);
     }
 
     public RobotContext getRobotContext() {
@@ -104,6 +106,16 @@ public class Robot extends BaseComponent {
         telemetry.update();
     }
 
+    public void onStart() {
+        telemetry.clear();
+    }
+
+    /*
+    TODO:
+        * Do we need all of the save and load from disk methods anymore?
+        * we could update these into using the new blackboard system
+        * either way, these methods still need to be reimplemented for BioBuzz
+     */
 
     public void saveStateToDisk() {
         saveStateToDisk("robot-state");
@@ -192,10 +204,6 @@ public class Robot extends BaseComponent {
         telemetry.addData("Updates / sec", String.format("%.1f", updatesPerSecond));
     }
 
-    public void onStart() {
-        telemetry.clear();
-    }
-
     /**
      * false - red (tag 24)<br>
      * true - blue (tag 20)
@@ -237,6 +245,8 @@ public class Robot extends BaseComponent {
     public Telemetry getTelemetry(){
         return telemetry;
     }
+    public Turret getTurret() {return turret;}
+
 
     private double computeBatteryVoltage() {
         double result = Double.POSITIVE_INFINITY;
