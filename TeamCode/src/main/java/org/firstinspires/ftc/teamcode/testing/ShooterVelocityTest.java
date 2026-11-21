@@ -7,6 +7,7 @@ import com.qualcomm.robotcore.hardware.MotorControlAlgorithm;
 import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
@@ -28,6 +29,7 @@ public class ShooterVelocityTest extends OpMode {
     double power1 = 100;
     double avgInactiveCurrent = 1;
 
+
     boolean reversed = false;
     boolean active;
 
@@ -41,6 +43,7 @@ public class ShooterVelocityTest extends OpMode {
     public void init() {
 
         shooter1 = hardwareMap.get(DcMotorEx.class, "shooter1");
+
 
         controller = new Controller(gamepad1);
         voltage = hardwareMap.voltageSensor.iterator().next();
@@ -81,6 +84,8 @@ public class ShooterVelocityTest extends OpMode {
             active = !active;
         }
 
+
+
         telemetry.addData("Active", active);
         telemetry.addData("Reversed", reversed);
         telemetry.addData("Set Power (tps)", power1);
@@ -93,6 +98,7 @@ public class ShooterVelocityTest extends OpMode {
             shooter1.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         }
 
+
         /*
 
          */
@@ -101,6 +107,7 @@ public class ShooterVelocityTest extends OpMode {
         telemetry.addData("Current", shooter1.getCurrent(CurrentUnit.AMPS));
         telemetry.addData("Voltage", voltage.getVoltage());
         telemetry.addData("Avg Inactive", avgInactiveCurrent);
+
 
         telemetry.update();
     }

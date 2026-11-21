@@ -43,7 +43,7 @@ public class HardwareTester extends OpMode {
         // Output the selected device to telemetry
         HardwareDevice device = devices.get(selectedDevice);
 
-        telemetry.addData("Device Count", selectedDevice + " of " + devices.size());
+        telemetry.addData("Device Count", selectedDevice + " of " + (devices.size()-1));
         telemetry.addData("Device", hardwareMap.getNamesOf(device));
         telemetry.addData("Type", device.getClass().getSimpleName());
 

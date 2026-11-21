@@ -55,6 +55,10 @@ public class Controller {
             ALIASES.put(B, CIRCLE);
             ALIASES.put(X, SQUARE);
             ALIASES.put(Y, TRIANGLE);
+            ALIASES.put(SOUTH, CROSS);
+            ALIASES.put(EAST, CIRCLE);
+            ALIASES.put(NORTH, TRIANGLE);
+            ALIASES.put(WEST, SQUARE);
 
 
             for (Map.Entry<Button, Button> entry : new HashMap<>(ALIASES).entrySet()) {
@@ -266,23 +270,6 @@ public class Controller {
     }
 
     public boolean isPressed(Button button) {
-
-        //TODO: move this into aliases
-        switch(button){
-            case SOUTH:
-                button = Button.CROSS;
-                break;
-            case EAST:
-                button = Button.CIRCLE;
-                break;
-            case NORTH:
-                button = Button.TRIANGLE;
-                break;
-            case WEST:
-                button = Button.SQUARE;
-                break;
-        }
-
         boolean buttonDown = isButtonDown(button);
         if (buttonDown) {
 
@@ -308,21 +295,6 @@ public class Controller {
     }
 
     public boolean isButtonDown(Button button) {
-        switch(button){
-            case SOUTH:
-                button = Button.CROSS;
-                break;
-            case EAST:
-                button = Button.CIRCLE;
-                break;
-            case NORTH:
-                button = Button.TRIANGLE;
-                break;
-            case WEST:
-                button = Button.SQUARE;
-                break;
-        }
-
         return isButtonDownInternal(button) ||
                 isButtonDownInternal(button.getAlias());
     }

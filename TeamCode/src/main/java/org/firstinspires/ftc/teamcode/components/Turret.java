@@ -3,10 +3,7 @@ package org.firstinspires.ftc.teamcode.components;
 import android.util.Size;
 
 import com.pedropathing.follower.Follower;
-import com.pedropathing.ftc.InvertedFTCCoordinates;
-import com.pedropathing.ftc.PoseConverter;
-import com.pedropathing.geometry.PedroCoordinates;
-import com.pedropathing.geometry.Pose;
+import com.pedropathing.math.Pose;
 import com.qualcomm.hardware.sparkfun.SparkFunOTOS.Pose2D;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
@@ -43,7 +40,7 @@ public class Turret extends BaseComponent {
     /**in degrees*/
     static double maxHeading = 90;
     /**in degrees*/
-    static double minHeading = -180;
+    static double minHeading = -90;
     double toleranceDeg = 5;
     double targetPos = 0;
     double targetDeg = 0;
@@ -68,19 +65,20 @@ public class Turret extends BaseComponent {
     static double effectiveTicksPerDeg = effectiveTicksPerRev / 360;
 
     // TARGET POSITIONS:
-    static Pose redHive1 = new Pose(58, 52, 0);
-    static Pose redHive2 = new Pose(58, 90, 180);
-    static Pose blueHive1 = new Pose(84, 52, 0);
-    static Pose blueHive2 = new Pose(84, 90, 180);
-    Pose currentPosition = new Pose();
+    static Pose redHive1 = new Pose(58, 52, Math.toRadians(0));
+    static Pose redHive2 = new Pose(58, 90, Math.toRadians(180));
+    static Pose blueHive1 = new Pose(84, 52, Math.toRadians(0));
+    static Pose blueHive2 = new Pose(84, 90, Math.toRadians(180));
+    Pose currentPosition = new Pose(0, 0);
     Pose targetGoal;
 
     // AIMING MODES
     private enum MoveMethods {
+        NO_MOVEMENT,
         RUN_TO_POSITION,
         PID_IMPOSTER
     }
-    MoveMethods moveMethod;
+    MoveMethods moveMethod = MoveMethods.PID_IMPOSTER;
     boolean autoAim = true;
     boolean autoMove = true;
 
@@ -163,6 +161,8 @@ public class Turret extends BaseComponent {
 
         // call the corresponding movement method
         switch (moveMethod) {
+            case NO_MOVEMENT:
+                return;
             case RUN_TO_POSITION:
                 moveRtp();return;
             case PID_IMPOSTER:
@@ -172,7 +172,7 @@ public class Turret extends BaseComponent {
     private void moveRtp(){
         turretMotor.setTargetPosition((int) targetPos);
         turretMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        turretMotor.setPower(0.5);
+        turretMotor.setPower(0.1);
     }
     private void movePid(){
         double ticksAway = Math.abs(turretPos - targetPos);
@@ -193,12 +193,12 @@ public class Turret extends BaseComponent {
 
     private Pose chooseTargetGoal(Pose location) {
         if (context.alliance) { // if blue
-            if (location.getY() < 72)
+            if (location.y() < 72)
                 return blueHive1;
             else
                 return blueHive2;
         } else {
-            if (location.getY() < 72)
+            if (location.y() < 72)
                 return redHive1;
             else
                 return redHive2;
@@ -206,14 +206,15 @@ public class Turret extends BaseComponent {
     }
     public double headingToGoalFromPose(Pose pose){
         // calculate angle to goal from robot position
-        double deltaY = targetGoal.getY() - pose.getY();
-        double deltaX = targetGoal.getX() - pose.getX();
+        double deltaY = targetGoal.y() - pose.y();
+        double deltaX = targetGoal.x() - pose.x();
         double angleToGoal = Math.atan2(deltaY, deltaX);
 
         // adjust for current robot rotation
-        return Math.toDegrees(pose.getHeading() - angleToGoal);
+        return Math.toDegrees(pose.heading() - angleToGoal);
     }
     private void normalizeTargetDegree(){
+        telemetry.addData("Pre normalized target degree", (Math.round(targetDeg * 100) / 100.0));
         // normalize angle so that θ ∈ [-180, 180)
         double adjustedAngle = ((targetDeg + 180) % 360) - 180;
         if (adjustedAngle < -180) { // java modulus is dumb
@@ -237,9 +238,11 @@ public class Turret extends BaseComponent {
     public void setTargetFromPose(Pose pose){setTargetDegrees(headingToGoalFromPose(pose));}
     public double getPositionDegrees(){return turretPos / effectiveTicksPerDeg;}
     public int getPositionTicks(){return turretPos;}
+    public double getTargetDegrees() {return targetDeg;}
     public void setPositionTicks(int ticks){turretOffset = ticks - turretMotor.getCurrentPosition();}
     public boolean setAutoAim(boolean autoAim){return this.autoAim = autoAim;}
     public boolean setAutoMove(boolean autoMove){return this.autoMove = autoMove;}
+    public boolean getAutoMove() {return autoMove;}
     public boolean getAutoAim(){return autoAim;}
     public void setCurrentPosition(Pose pose) {this.currentPosition = pose;}
     public Pose getTargetGoal(){return targetGoal;};

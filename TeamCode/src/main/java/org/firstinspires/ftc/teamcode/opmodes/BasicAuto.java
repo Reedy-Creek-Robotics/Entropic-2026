@@ -19,7 +19,6 @@ public class BasicAuto extends LinearOpMode {
         robot.init();
 
         waitForStart();
-
         robot.getShooter().closeGate();
         robot.getShooter().setVelocity(1000);
         while(robot.getShooter().getVelocity() < 980 && opModeIsActive()){

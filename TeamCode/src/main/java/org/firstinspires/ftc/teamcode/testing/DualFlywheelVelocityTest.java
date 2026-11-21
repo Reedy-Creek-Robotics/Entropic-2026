@@ -7,6 +7,7 @@ import com.qualcomm.robotcore.hardware.MotorControlAlgorithm;
 import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
@@ -26,6 +27,10 @@ public class DualFlywheelVelocityTest extends OpMode {
 
     VoltageSensor voltage;
 
+    Servo roller;
+    double servoPower = 0.0;
+
+
     double power1 = 100;
     double power2 = 100;
     double avgInactiveCurrent = 1;
@@ -44,6 +49,7 @@ public class DualFlywheelVelocityTest extends OpMode {
 
         shooter1 = hardwareMap.get(DcMotorEx.class, "shooter1");
         shooter2 = hardwareMap.get(DcMotorEx.class, "shooter2");
+        roller = hardwareMap.get(Servo.class, "roller");
 
         controller = new Controller(gamepad1);
         voltage = hardwareMap.voltageSensor.iterator().next();
@@ -60,6 +66,8 @@ public class DualFlywheelVelocityTest extends OpMode {
         telemetry.addLine("------------------------");
 
 //        setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, pidf);
+
+
 
         if(controller.isPressed(Controller.Button.DPAD_UP)){
             power1 += 100;
@@ -100,6 +108,23 @@ public class DualFlywheelVelocityTest extends OpMode {
             if (reversed > 3) reversed = 0;
         }
 
+        if (controller.isPressed(Controller.Button.RIGHT_BUMPER)) {
+            servoPower += 0.05;
+        }
+        if (controller.isPressed(Controller.Button.LEFT_BUMPER)) {
+            servoPower -= 0.05;
+        }
+
+        if (controller.isPressed((Controller.Button.OPTIONS))) {
+            if (power1 == 600) {
+                power1 = 1050;
+                power2 = 1050;
+            } else {
+                power1 = 600;
+                power2 = 600;
+            }
+        }
+
         telemetry.addData("Active", active);
         telemetry.addData("Reversed", reversed);
         telemetry.addData("Set Power 1 (tps)", power1);
@@ -133,6 +158,8 @@ public class DualFlywheelVelocityTest extends OpMode {
             shooter2.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         }
 
+        roller.setPosition((servoPower + 1) / 2.0);
+
         /*
 
          */
@@ -143,6 +170,8 @@ public class DualFlywheelVelocityTest extends OpMode {
         telemetry.addData("Current", shooter2.getCurrent(CurrentUnit.AMPS));
         telemetry.addData("Voltage", voltage.getVoltage());
         telemetry.addData("Avg Inactive", avgInactiveCurrent);
+        telemetry.addData("Servo Power", servoPower);
+
 
         telemetry.update();
     }

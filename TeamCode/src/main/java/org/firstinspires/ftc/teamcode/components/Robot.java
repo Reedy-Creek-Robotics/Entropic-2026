@@ -3,7 +3,7 @@ package org.firstinspires.ftc.teamcode.components;
 import android.annotation.SuppressLint;
 
 
-import com.pedropathing.geometry.Pose;
+import com.pedropathing.math.Pose;
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
@@ -78,7 +78,6 @@ public class Robot extends BaseComponent {
 
         telemetry.addLine("Robot is initialized");
         telemetry.update();
-
         initTime = new ElapsedTime();
     }
 
