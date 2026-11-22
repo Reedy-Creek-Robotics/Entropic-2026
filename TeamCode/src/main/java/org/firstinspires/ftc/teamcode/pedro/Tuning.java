@@ -33,4 +33,8 @@ public class Tuning {
     public static Procedure tests() {
         return new Tests(hardwareMap -> new Mecanum(hardwareMap, Constants.driveConfig), (hardwareMap -> new PinpointLocalizer(hardwareMap, Constants.pinpointLocalizerConstants)), null);
     }
+    @Tuner
+    public static Procedure foresightTuner() {
+        return new ForesightTuner((hardwareMap) -> new PinpointLocalizer(hardwareMap, Constants.pinpointLocalizerConstants), (hardwareMap) -> new Mecanum(hardwareMap, Constants.driveConfig));
+    }
 }
