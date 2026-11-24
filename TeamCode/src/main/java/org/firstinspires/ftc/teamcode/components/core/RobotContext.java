@@ -65,6 +65,8 @@ public class RobotContext {
     public boolean getAlliance() {
         return alliance;
     }
+    public void setAlliance(boolean alliance) {this.alliance = alliance;}
+
 
     /*public enum Alliance{
         BLUE(1,-90),
